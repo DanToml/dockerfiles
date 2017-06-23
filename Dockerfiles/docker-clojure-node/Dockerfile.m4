@@ -1,5 +1,5 @@
 FROM clojure:BASE_TAG
-MAINTAINER Danielle Tomlinson <dan@tomlinson.io>
+LABEL maintainer "Danielle Tomlinson <dan@tomlinson.io>"
 
 ENV NPM_CONFIG_LOGLEVEL info
 
