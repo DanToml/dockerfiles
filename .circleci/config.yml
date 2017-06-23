@@ -42,6 +42,14 @@ references:
       - generate_all_dockerfiles
       - checkout_code
 
+  install_tar: &install_tar
+    run:
+      name: Install tar
+      command: |
+        set -x
+        apk update
+        apk add tar
+
 jobs:
   checkout_code:
     <<: *container_config
@@ -59,6 +67,7 @@ jobs:
   generate_all_dockerfiles:
     <<: *container_config
     steps:
+      - *install_tar
       - *attach_workspace
       - *load_code
       - run: scripts/generate-all-dockerfiles
@@ -75,6 +84,7 @@ jobs:
   publish_lein-flyway-ext:
     <<: *container_config
     steps:
+      - *install_tar
       - *attach_workspace
       - *load_code
       - setup_remote_docker
@@ -83,6 +93,7 @@ jobs:
   publish_docker-clojure-node:
     <<: *container_config
     steps:
+      - *install_tar
       - *attach_workspace
       - *load_code
       - setup_remote_docker
