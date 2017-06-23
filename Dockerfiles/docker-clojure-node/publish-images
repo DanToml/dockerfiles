@@ -2,7 +2,7 @@
 
 set -exo pipefail
 
-IMAGE_NAME="docker-clojure-node"
+IMAGE_NAME="clojure-node"
 echo "Running release for image: $IMAGE_NAME"
 
 pushd images

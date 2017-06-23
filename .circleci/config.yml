@@ -3,7 +3,7 @@ version: 2
 references:
   container_config: &container_config
     docker:
-      - image: docker:17.05.0-ce-git
+      - image: endocrimes/docker-bash:17.05.0-ce-git
     working_directory: /root/code
 
   workspace_root: &workspace_root
@@ -72,6 +72,7 @@ jobs:
       - *load_code
       - run: scripts/generate-image-named lein-flyway-ext
       - run: scripts/generat-image-named docker-clojure-node
+      - run: scripts/generat-image-named docker-bash
       - run:
           command: |
             rm -rf /tmp/workspace/code
@@ -100,6 +101,15 @@ jobs:
       - setup_remote_docker
       - *docker_login
       - run: scripts/release-image-named docker-clojure-node
+  publish_docker-bash:
+    <<: *container_config
+    steps:
+      - *install_tar
+      - *attach_workspace
+      - *load_code
+      - setup_remote_docker
+      - *docker_login
+      - run: scripts/release-image-named docker-bash
 
 workflows:
   version: 2
@@ -110,6 +120,8 @@ workflows:
           requires:
             - checkout_code
       - publish_lein-flyway-ext:
+          <<: *deploy_prequisites
+      - publish_docker-bash:
           <<: *deploy_prequisites
       - publish_docker-clojure-node:
           <<: *deploy_prequisites
