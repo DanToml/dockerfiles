@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -exo pipefail
+
+declare -r VARIANTS=("lein-2.7.1-alpine/6.10.0"
+                     "lein-2.7.1-alpine/7.9.0")
+
+for VARIANT in "${VARIANTS[@]}"; do
+  LEIN=${VARIANT%/*}
+  NODE=${VARIANT#*/}
+  WD="images/$LEIN-node-$NODE"
+  mkdir -p "$WD"
+  pushd "$(dirname "$0")"
+  m4 -DBASE_TAG="$LEIN" -DvNODE_VERSION="$NODE" Dockerfile.m4 > "$WD/Dockerfile"
+  popd
+done

@@ -1,0 +1,103 @@
+version: 2
+
+references:
+  container_config: &container_config
+    docker:
+      - image: docker:17.05.0-ce-git
+    working_directory: /root/code
+
+  workspace_root: &workspace_root
+    /tmp/workspace
+
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: *workspace_root
+
+  load_code: &load_code
+    run:
+      name: load code from workspace
+      command: |
+        # Move all files and dotfiles to current directory
+        mv /tmp/workspace/code/* /tmp/workspace/code/.[!.]* .
+
+  load_build: &load_build
+    run:
+      name: load build from workspace
+      command: |
+        mv /tmp/workspace/build .
+
+  docker_login: &docker_login
+    run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+  container_setup: &container_setup
+    - checkout
+    - setup_remote_docker
+
+  deploy_prequisites: &deploy_prequisites
+    filters:
+      branches:
+        only:
+          - master
+    requires:
+      - generate_all_dockerfiles
+      - checkout_code
+
+jobs:
+  checkout_code:
+    <<: *container_config
+    steps:
+      - checkout
+      - run:
+          command: |
+            mkdir -p /tmp/workspace/code
+            mv * .[!.]* /tmp/workspace/code/
+      - persist_to_workspace:
+          root: *workspace_root
+          paths:
+            - code
+
+  generate_all_dockerfiles:
+    <<: *container_config
+    steps:
+      - *attach_workspace
+      - *load_code
+      - run: scripts/generate-all-dockerfiles
+      - run:
+          command: |
+            rm -rf /tmp/workspace/code
+            mkdir -p /tmp/workspace/code
+            mv * .[!.]* /tmp/workspace/code/
+      - persist_to_workspace:
+          root: *workspace_root
+          paths:
+            - code
+
+  publish_lein-flyway-ext:
+    <<: *container_config
+    steps:
+      - *attach_workspace
+      - *load_code
+      - setup_remote_docker
+      - *docker_login
+      - run: scripts/release-image lein-flyway-ext
+  publish_docker-clojure-node:
+    <<: *container_config
+    steps:
+      - *attach_workspace
+      - *load_code
+      - setup_remote_docker
+      - *docker_login
+      - run: scripts/release-image docker-clojure-node
+
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - checkout_code
+      - generate_all_dockerfiles:
+          requires:
+            - checkout_code
+      - publish_lein-flyway-ext:
+          <<: *deploy_prequisites
+      - publish_docker-clojure-node:
+          <<: *deploy_prequisites

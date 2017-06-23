@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+export ORG="dantoml"
+IMAGE_NAME=$1
+
+pushd Dockerfiles/$IMAGE_NAME
+exec ./publish-images
