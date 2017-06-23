@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+IMAGE_NAME=$1
+
+pushd Dockerfiles/$IMAGE_NAME
+exec ./generate-images

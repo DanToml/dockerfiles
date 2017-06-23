@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -exo pipefail
+
+IMAGE_NAME="lein-flyway-ext"
+echo "Running release for image: $IMAGE_NAME"
+
+pushd images
+  for TAG in *; do
+    echo "Releasing tag $TAG"
+    IMAGE_ID="$ORG/$IMAGE_NAME:$TAG"
+    docker pull "$IMAGE_ID" || true
+    docker build -t "$IMAGE_ID" .
+    docker push "$IMAGE_ID"
+  done
+popd
