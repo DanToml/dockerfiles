@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -ex
+
+declare -r VERSIONS=("17.05.0-ce-git")
+
+for VERSION in "${VERSIONS[@]}"; do
+  mkdir -p "images/$VERSION" || true
+  m4 -DBASE_VERSION="$VERSION" Dockerfile.m4 > "images/$VERSION/Dockerfile"
+done
+
