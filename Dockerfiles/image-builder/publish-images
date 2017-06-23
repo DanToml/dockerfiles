@@ -2,7 +2,7 @@
 
 set -exo pipefail
 
-IMAGE_NAME="docker-bash"
+IMAGE_NAME="image-builder"
 echo "Running release for image: $IMAGE_NAME"
 
 pushd images

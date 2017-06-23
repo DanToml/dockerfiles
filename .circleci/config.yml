@@ -3,7 +3,7 @@ version: 2
 references:
   container_config: &container_config
     docker:
-      - image: endocrimes/docker-bash:17.05.0-ce-git
+      - image: endocrimes/image-builder:17.05.0-ce-git
     working_directory: /root/code
 
   workspace_root: &workspace_root
