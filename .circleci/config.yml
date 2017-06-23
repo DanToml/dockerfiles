@@ -71,8 +71,8 @@ jobs:
       - *attach_workspace
       - *load_code
       - run: scripts/generate-image-named lein-flyway-ext
-      - run: scripts/generat-image-named docker-clojure-node
-      - run: scripts/generat-image-named docker-bash
+      - run: scripts/generate-image-named docker-clojure-node
+      - run: scripts/generate-image-named docker-bash
       - run:
           command: |
             rm -rf /tmp/workspace/code
