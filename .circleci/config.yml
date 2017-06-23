@@ -72,7 +72,7 @@ jobs:
       - *load_code
       - run: scripts/generate-image-named lein-flyway-ext
       - run: scripts/generate-image-named docker-clojure-node
-      - run: scripts/generate-image-named docker-bash
+      - run: scripts/generate-image-named image-builder
       - run:
           command: |
             rm -rf /tmp/workspace/code
@@ -101,7 +101,7 @@ jobs:
       - setup_remote_docker
       - *docker_login
       - run: scripts/release-image-named docker-clojure-node
-  publish_docker-bash:
+  publish_image-builder:
     <<: *container_config
     steps:
       - *install_tar
@@ -109,7 +109,7 @@ jobs:
       - *load_code
       - setup_remote_docker
       - *docker_login
-      - run: scripts/release-image-named docker-bash
+      - run: scripts/release-image-named image-builder
 
 workflows:
   version: 2
@@ -121,7 +121,7 @@ workflows:
             - checkout_code
       - publish_lein-flyway-ext:
           <<: *deploy_prequisites
-      - publish_docker-bash:
+      - publish_image-builder:
           <<: *deploy_prequisites
       - publish_docker-clojure-node:
           <<: *deploy_prequisites
