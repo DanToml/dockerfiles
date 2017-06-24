@@ -92,18 +92,18 @@ jobs:
     <<: *container_config
     <<: *deploy_steps
     environment:
-      IMAGE_NAME: 'lein-flyway-ext'
+      - IMAGE_NAME: 'lein-flyway-ext'
 
   publish_docker-clojure-node:
     <<: *container_config
     <<: *deploy_steps
     environment:
-      IMAGE_NAME: 'docker-clojure-node'
+      - IMAGE_NAME: 'docker-clojure-node'
   publish_image-builder:
     <<: *container_config
     <<: *deploy_steps
     environment:
-      IMAGE_NAME: 'image-builder'
+      - IMAGE_NAME: 'image-builder'
 
 workflows:
   version: 2
