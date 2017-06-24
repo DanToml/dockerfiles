@@ -89,17 +89,17 @@ jobs:
   publish_lein-flyway-ext:
     <<: *container_config
     steps:
-      <<: *publish_setup
+      - *publish_setup
       - run: scripts/publish-image-named lein-flyway-ext
   publish_docker-clojure-node:
     <<: *container_config
     steps:
-      <<: *publish_setup
+      - *publish_setup
       - run: scripts/publish-image-named docker-clojure-node
   publish_image-builder:
     <<: *container_config
     steps:
-      <<: *publish_setup
+      - *publish_setup
       - run: scripts/publish-image-named image-builder
 
 workflows:
