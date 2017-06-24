@@ -29,15 +29,6 @@ references:
   docker_login: &docker_login
     run: docker login -u $DOCKER_USER -p $DOCKER_PASS
 
-  deploy_steps: &deploy_steps
-    steps:
-      - *install_tar
-      - *attach_workspace
-      - *load_code
-      - setup_remote_docker
-      - *docker_login
-      - run: scripts/publish-image-named $IMAGE_NAME
-
   deploy_prequisites: &deploy_prequisites
     filters:
       branches:
@@ -54,6 +45,16 @@ references:
         set -x
         apk update
         apk add tar
+
+  deploy_job: &deploy_job
+    <<: *container_config
+    steps:
+      - *install_tar
+      - *attach_workspace
+      - *load_code
+      - setup_remote_docker
+      - *docker_login
+      - run: scripts/publish-image-named $IMAGE_NAME
 
 jobs:
   checkout_code:
@@ -89,19 +90,16 @@ jobs:
             - code
 
   publish_lein-flyway-ext:
-    <<: *container_config
-    <<: *deploy_steps
+    <<: *deploy_job
     environment:
       - IMAGE_NAME: 'lein-flyway-ext'
 
   publish_docker-clojure-node:
-    <<: *container_config
-    <<: *deploy_steps
+    <<: *deploy_job
     environment:
       - IMAGE_NAME: 'docker-clojure-node'
   publish_image-builder:
-    <<: *container_config
-    <<: *deploy_steps
+    <<: *deploy_job
     environment:
       - IMAGE_NAME: 'image-builder'
 
