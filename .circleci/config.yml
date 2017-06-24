@@ -29,9 +29,14 @@ references:
   docker_login: &docker_login
     run: docker login -u $DOCKER_USER -p $DOCKER_PASS
 
-  container_setup: &container_setup
-    - checkout
-    - setup_remote_docker
+  deploy_steps: &deploy_steps
+    steps:
+      - *install_tar
+      - *attach_workspace
+      - *load_code
+      - setup_remote_docker
+      - *docker_login
+      - run: scripts/publish-image-named $IMAGE_NAME
 
   deploy_prequisites: &deploy_prequisites
     filters:
@@ -85,31 +90,20 @@ jobs:
 
   publish_lein-flyway-ext:
     <<: *container_config
-    steps:
-      - *install_tar
-      - *attach_workspace
-      - *load_code
-      - setup_remote_docker
-      - *docker_login
-      - run: scripts/publish-image-named lein-flyway-ext
+    <<: *deploy_steps
+    environment:
+      IMAGE_NAME: 'lein-flyway-ext'
+
   publish_docker-clojure-node:
     <<: *container_config
-    steps:
-      - *install_tar
-      - *attach_workspace
-      - *load_code
-      - setup_remote_docker
-      - *docker_login
-      - run: scripts/publish-image-named docker-clojure-node
+    <<: *deploy_steps
+    environment:
+      IMAGE_NAME: 'docker-clojure-node'
   publish_image-builder:
     <<: *container_config
-    steps:
-      - *install_tar
-      - *attach_workspace
-      - *load_code
-      - setup_remote_docker
-      - *docker_login
-      - run: scripts/publish-image-named image-builder
+    <<: *deploy_steps
+    environment:
+      IMAGE_NAME: 'image-builder'
 
 workflows:
   version: 2
